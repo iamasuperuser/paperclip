@@ -1,0 +1,19 @@
+skills/paperclip/SKILL.md
+  s_d486ada40d784f::t_b6e98bcca364c9 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "189ad779af19bbb409f201155bd7f354315f0e1d",
+  "prompts": {},
+  "sessions": {
+    "s_d486ada40d784f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ff4854df6ffeNfYq3AmvzS2Nn8",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
