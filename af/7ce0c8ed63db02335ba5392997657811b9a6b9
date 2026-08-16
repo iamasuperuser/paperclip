@@ -1,0 +1,22 @@
+server/src/services/issues.ts
+  s_d486ada40d784f::t_5b587d33233e25 8485-8496,8498,8501-8502
+  s_d486ada40d784f::t_ebe389035391ee 3
+server/src/__tests__/issues-service.test.ts
+  s_d486ada40d784f::t_a337de79ea821a 2374-2504
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "af7ce0c8ed63db02335ba5392997657811b9a6b9",
+  "prompts": {},
+  "sessions": {
+    "s_d486ada40d784f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ff4854df6ffeNfYq3AmvzS2Nn8",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
