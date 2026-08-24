@@ -1,0 +1,21 @@
+packages/adapter-utils/src/server-utils.ts
+  s_9b05eff6c0b8f0::t_34bdd44d95b19b 179
+packages/adapter-utils/src/server-utils.test.ts
+  s_9b05eff6c0b8f0::t_f52eccf3b153ac 885-892
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "7c0721e6c4b8176b94bb5f931c9a37328e2f60e8",
+  "prompts": {},
+  "sessions": {
+    "s_9b05eff6c0b8f0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcab8c37cffessx3Ob0eRHWNLp",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
