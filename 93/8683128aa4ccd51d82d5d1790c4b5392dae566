@@ -1,0 +1,23 @@
+skills/paperclip/SKILL.md
+  s_9b05eff6c0b8f0::t_ad7a2475c5c474 20
+packages/adapter-utils/src/server-utils.test.ts
+  s_9b05eff6c0b8f0::t_9d329988519bc8 884-890
+packages/adapter-utils/src/server-utils.ts
+  s_9b05eff6c0b8f0::t_131a4ca6f9e536 179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "938683128aa4ccd51d82d5d1790c4b5392dae566",
+  "prompts": {},
+  "sessions": {
+    "s_9b05eff6c0b8f0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcab8c37cffessx3Ob0eRHWNLp",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
