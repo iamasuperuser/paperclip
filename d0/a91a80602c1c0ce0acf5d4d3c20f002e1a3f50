@@ -1,0 +1,33 @@
+server/src/__tests__/issue-agent-mutation-ownership-routes.test.ts
+  s_235fc46cd9120e::t_741e3b90176236 25
+  s_235fc46cd9120e::t_61f3da3f9d912e 367-415
+  s_235fc46cd9120e::t_e1e0b935eebba0 512-513
+  s_235fc46cd9120e::t_00bb911ad4ab03 1745-1801
+packages/shared/src/validators/issue.ts
+  s_235fc46cd9120e::t_e3c5e8e41a49f4 476-488,495
+  s_235fc46cd9120e::t_19c0a7b0441c6e 42
+server/src/routes/issues.ts
+  s_235fc46cd9120e::t_e95e9597586f31 9754
+  s_235fc46cd9120e::t_22679f575995bb 9701-9705
+  s_235fc46cd9120e::t_ab7b5dced03053 69
+packages/shared/src/validators/index.ts
+  s_235fc46cd9120e::t_5342f740226f64 421-422
+packages/shared/src/index.ts
+  s_235fc46cd9120e::t_4b3d92f8d0e9cf 1807-1808
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d0a91a80602c1c0ce0acf5d4d3c20f002e1a3f50",
+  "prompts": {},
+  "sessions": {
+    "s_235fc46cd9120e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fba803508ffezMDpSntpnrFOxa",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
