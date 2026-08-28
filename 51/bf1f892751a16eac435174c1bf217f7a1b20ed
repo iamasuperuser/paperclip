@@ -1,0 +1,22 @@
+server/src/routes/issues.ts
+  s_6edfebb0e81409::t_f1c7075942b3be 9704-9706
+  s_6edfebb0e81409::t_1943c6f84f4046 9707-9709
+server/src/__tests__/issue-agent-mutation-ownership-routes.test.ts
+  s_6edfebb0e81409::t_ee38214ea9554b 1790-1804
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "51bf1f892751a16eac435174c1bf217f7a1b20ed",
+  "prompts": {},
+  "sessions": {
+    "s_6edfebb0e81409": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fba542799ffen7tgMBWIHKU4Of",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
