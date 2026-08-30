@@ -2,6 +2,7 @@ packages/adapter-utils/src/server-utils.ts
   s_9b05eff6c0b8f0::t_34bdd44d95b19b 196
 packages/adapter-utils/src/server-utils.test.ts
   s_9b05eff6c0b8f0::t_f52eccf3b153ac 1124-1128
+  s_2462121e3a3d13::t_288104d1cc4b7d 1130,1133,1136
 ---
 {
   "schema_version": "authorship/3.0.0",
@@ -9,6 +10,14 @@ packages/adapter-utils/src/server-utils.test.ts
   "base_commit_sha": "9ba549555c1b1f86d8a2be4d8dfa47c69f08e0a1",
   "prompts": {},
   "sessions": {
+    "s_2462121e3a3d13": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae35b4cdffe16XbdTbtEdsbay",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    },
     "s_9b05eff6c0b8f0": {
       "agent_id": {
         "tool": "opencode",
