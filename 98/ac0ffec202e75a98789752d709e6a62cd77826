@@ -2,6 +2,7 @@ skills/paperclip/SKILL.md
   s_9b05eff6c0b8f0::t_ad7a2475c5c474 20
 packages/adapter-utils/src/server-utils.test.ts
   s_9b05eff6c0b8f0::t_9d329988519bc8 1123-1126
+  s_2462121e3a3d13::t_279acc8dc26b8f 1127-1135
 packages/adapter-utils/src/server-utils.ts
   s_9b05eff6c0b8f0::t_131a4ca6f9e536 196
 ---
@@ -11,6 +12,14 @@ packages/adapter-utils/src/server-utils.ts
   "base_commit_sha": "98ac0ffec202e75a98789752d709e6a62cd77826",
   "prompts": {},
   "sessions": {
+    "s_2462121e3a3d13": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae35b4cdffe16XbdTbtEdsbay",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    },
     "s_9b05eff6c0b8f0": {
       "agent_id": {
         "tool": "opencode",
