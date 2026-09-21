@@ -1,0 +1,30 @@
+packages/adapter-utils/src/server-utils.test.ts
+  s_9b05eff6c0b8f0::t_9d329988519bc8 1448-1451
+  s_2462121e3a3d13::t_279acc8dc26b8f 1452-1460
+packages/adapter-utils/src/server-utils.ts
+  s_9b05eff6c0b8f0::t_131a4ca6f9e536 221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "d05791fbed9fb7e21f91e61a3610415b6bc23de6",
+  "prompts": {},
+  "sessions": {
+    "s_2462121e3a3d13": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae35b4cdffe16XbdTbtEdsbay",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    },
+    "s_9b05eff6c0b8f0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcab8c37cffessx3Ob0eRHWNLp",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
