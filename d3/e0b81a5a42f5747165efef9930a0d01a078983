@@ -1,0 +1,40 @@
+server/src/modules/active-run-watchdog/thresholds.ts
+  s_102fed277e9a36::t_84f0c505d9b18f 1-10
+server/src/__tests__/issue-stale-execution-lock-routes.test.ts
+  s_102fed277e9a36::t_647d36e4ca096e 577-580
+  s_102fed277e9a36::t_9f9b22ab6e4801 568-571
+  s_102fed277e9a36::t_998aa6f2bb7729 670-673,675
+  s_102fed277e9a36::t_a3342358f853c3 593-595,598-599
+  s_102fed277e9a36::t_79dd9cbad1ae81 573-575
+  s_102fed277e9a36::t_b3af83e2888aa5 544-567,572,576,581-592,596-597,600-669,674,676-760
+server/src/__tests__/issues-service.test.ts
+  s_102fed277e9a36::t_ffe4857e9f6a2e 7028-7166
+  s_102fed277e9a36::t_cf1ed896e17e50 6909-6914
+  s_102fed277e9a36::t_cf0329511d6952 38
+  s_102fed277e9a36::t_6a8f988c478879 6965
+server/src/services/recovery/service.ts
+  s_102fed277e9a36::t_1b4906e485f116 144-154
+server/src/__tests__/issue-agent-mutation-ownership-routes.test.ts
+  s_102fed277e9a36::t_1e43fa904591f9 1113-1146
+server/src/services/issues.ts
+  s_102fed277e9a36::t_bc8d288a1cb574 11818-11867
+  s_102fed277e9a36::t_fa38fb8c402c07 2-3
+  s_102fed277e9a36::t_5da61d86b4e0aa 7471,7503-7509,7519-7522,7524-7527,7559-7583
+  s_102fed277e9a36::t_e713db6405b754 2046-2086
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d3e0b81a5a42f5747165efef9930a0d01a078983",
+  "prompts": {},
+  "sessions": {
+    "s_102fed277e9a36": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3054392affehkeogFOcp66TxX",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
