@@ -1,0 +1,33 @@
+server/src/__tests__/issues-service.test.ts
+  s_102fed277e9a36::t_554aa8f133c020 17
+  s_102fed277e9a36::t_b49df979306f19 7177-7181,7183
+  s_102fed277e9a36::t_468778ed86c76e 7168-7176,7182,7184-7273
+server/src/services/issues.ts
+  s_102fed277e9a36::t_c531b77e5ce075 7547-7554,7558
+  s_102fed277e9a36::t_d667c690a0af00 7473-7474
+  s_102fed277e9a36::t_3cd9f664ab5580 4
+  s_102fed277e9a36::t_d5afdc703256c3 11869-11875,11879-11880
+  s_102fed277e9a36::t_34960e9b63f048 7462-7472,7475-7484
+server/src/modules/active-run-watchdog/adapters/decision-state.ts
+  s_102fed277e9a36::t_2c1b6d1542ec53 1-66
+server/src/modules/active-run-watchdog/adapters/postgres.ts
+  s_102fed277e9a36::t_70e7632d99957d 1
+  s_102fed277e9a36::t_89530da42c9cf3 24
+  s_102fed277e9a36::t_593c318dac0dff 124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "38b04bee5c5fe199c5a1ee8683b7e1e259bbab5f",
+  "prompts": {},
+  "sessions": {
+    "s_102fed277e9a36": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3054392affehkeogFOcp66TxX",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
