@@ -35,6 +35,7 @@ import {
   getEmbeddedPostgresTestSupport,
   startEmbeddedPostgresTestDatabase,
 } from "./helpers/embedded-postgres.js";
+import { ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS } from "../modules/active-run-watchdog/thresholds.js";
 import { instanceSettingsService } from "../services/instance-settings.ts";
 import {
   clampIssueListLimit,
@@ -6905,6 +6906,12 @@ describeEmbeddedPostgres("issueService.assertCheckoutOwner stale checkout adopti
     checkoutStatus: "running" | "failed" | "timed_out";
     actorRunStatus?: "running" | "failed" | "timed_out" | "succeeded";
     assigneeMatchesActor?: boolean;
+    holdingRunTimestamps?: {
+      createdAt?: Date;
+      processStartedAt?: Date;
+      startedAt?: Date;
+      lastOutputAt?: Date | null;
+    };
   }) {
     const companyId = randomUUID();
     const assigneeAgentId = randomUUID();
@@ -6955,6 +6962,7 @@ describeEmbeddedPostgres("issueService.assertCheckoutOwner stale checkout adopti
         status: params.checkoutStatus,
         invocationSource: "manual",
         finishedAt: params.checkoutStatus === "running" ? null : new Date(),
+        ...params.holdingRunTimestamps,
       },
       {
         id: actorRunId,
@@ -7011,6 +7019,145 @@ describeEmbeddedPostgres("issueService.assertCheckoutOwner stale checkout adopti
 
   it("keeps live checkout owners protected with a 409 conflict", async () => {
     const seeded = await seedOwnershipIssue({ checkoutStatus: "running" });
+
+    await expect(
+      svc.assertCheckoutOwner(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
+  it("lets the current assignee supersede a critically-silent running checkout owner", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        processStartedAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+
+    const ownership = await svc.assertCheckoutOwner(
+      seeded.issueId,
+      seeded.actorAgentId,
+      seeded.actorRunId,
+    );
+
+    expect(ownership.checkoutRunId).toBe(seeded.actorRunId);
+    expect(ownership.executionRunId).toBe(seeded.actorRunId);
+    expect(ownership.adoptedFromRunId).toBe(seeded.staleRunId);
+
+    const supersedeAudit = await db
+      .select({ action: activityLog.action, details: activityLog.details })
+      .from(activityLog)
+      .where(eq(activityLog.action, "issue.checkout_lock_superseded"));
+    expect(supersedeAudit).toHaveLength(1);
+    expect(supersedeAudit[0]?.details).toMatchObject({
+      source: "issues.adoptStaleCheckoutRun",
+      supersededRunId: seeded.staleRunId,
+      supersededRunStatus: "running",
+      actorAgentId: seeded.actorAgentId,
+      actorRunId: seeded.actorRunId,
+      silenceAgeMs: expect.any(Number),
+      criticalThresholdMs: ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS,
+    });
+  });
+
+  it("lets the assignee's fresh run checkout over a critically-silent running owner", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+
+    const checkedOut = await svc.checkout(
+      seeded.issueId,
+      seeded.actorAgentId,
+      ["todo", "backlog", "blocked", "in_review"],
+      seeded.actorRunId,
+    );
+
+    expect(checkedOut.checkoutRunId).toBe(seeded.actorRunId);
+    expect(checkedOut.executionRunId).toBe(seeded.actorRunId);
+  });
+
+  it("lets the current assignee release past a critically-silent running checkout owner", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+
+    const released = await svc.release(
+      seeded.issueId,
+      seeded.actorAgentId,
+      seeded.actorRunId,
+    );
+
+    expect(released?.status).toBe("todo");
+    expect(released?.assigneeAgentId).toBeNull();
+    expect(released?.checkoutRunId).toBeNull();
+    expect(released?.executionRunId).toBeNull();
+
+    const supersedeAudit = await db
+      .select({ action: activityLog.action, details: activityLog.details })
+      .from(activityLog)
+      .where(eq(activityLog.action, "issue.checkout_lock_superseded"));
+    expect(supersedeAudit).toHaveLength(1);
+    expect(supersedeAudit[0]?.details).toMatchObject({
+      source: "issues.release",
+      supersededRunId: seeded.staleRunId,
+      supersededRunStatus: "running",
+      actorAgentId: seeded.actorAgentId,
+      actorRunId: seeded.actorRunId,
+      silenceAgeMs: expect.any(Number),
+      criticalThresholdMs: ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS,
+    });
+  });
+
+  it("does not let a different agent supersede a critically-silent running checkout owner", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      assigneeMatchesActor: false,
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+
+    await expect(
+      svc.assertCheckoutOwner(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
+    ).rejects.toMatchObject({ status: 409 });
+
+    const row = await db
+      .select({
+        checkoutRunId: issues.checkoutRunId,
+        executionRunId: issues.executionRunId,
+      })
+      .from(issues)
+      .where(eq(issues.id, seeded.issueId))
+      .then((rows) => rows[0]);
+    expect(row).toEqual({
+      checkoutRunId: seeded.staleRunId,
+      executionRunId: seeded.staleRunId,
+    });
+  });
+
+  it("keeps a running checkout owner with recent output protected despite long total age", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+        lastOutputAt: new Date(),
+      },
+    });
 
     await expect(
       svc.assertCheckoutOwner(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
