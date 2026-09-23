@@ -16,16 +16,18 @@ export type WatchdogDecisionState = {
  * a snooze/continue decision currently shields the run (snoozedUntil in the
  * future). Lives in its own leaf module so both the watchdog adapter and the
  * issue binding guards read one shared query instead of duplicating the
- * decision semantics.
+ * decision semantics. Accepts any read handle (a full `Db` or an open
+ * transaction) so callers inside a transaction reuse their connection instead
+ * of re-entering the outer pool.
  */
 export async function findLatestWatchdogDecisionState(
-  db: Db,
+  dbOrTx: Pick<Db, "select">,
   companyId: string,
   runId: string,
   now: Date,
 ): Promise<WatchdogDecisionState> {
   const [quietUntilRows, dismissedRows] = await Promise.all([
-    db
+    dbOrTx
       .select({
         decision: heartbeatRunWatchdogDecisions.decision,
         snoozedUntil: heartbeatRunWatchdogDecisions.snoozedUntil,
@@ -41,7 +43,7 @@ export async function findLatestWatchdogDecisionState(
       )
       .orderBy(desc(heartbeatRunWatchdogDecisions.createdAt))
       .limit(1),
-    db
+    dbOrTx
       .select({ id: heartbeatRunWatchdogDecisions.id })
       .from(heartbeatRunWatchdogDecisions)
       .where(

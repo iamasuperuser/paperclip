@@ -7464,14 +7464,17 @@ export function issueService(db: Db) {
   // decision (snoozedUntil in the future) or a durable dismissed-false-positive
   // decision means the silence signal was deliberately overruled, so the
   // binding supersede must wait until that protection lapses. Decisions are
-  // read with the same semantics the recovery scanner uses.
+  // read with the same semantics the recovery scanner uses, through the
+  // caller's active transaction handle so the read never re-enters the outer
+  // pool from inside a transaction.
   async function holdingRunIsWatchdogProtected(
+    dbOrTx: DbReader,
     companyId: string,
     runId: string,
     now: Date,
   ): Promise<boolean> {
     const decisionState = await findLatestWatchdogDecisionState(
-      db,
+      dbOrTx,
       companyId,
       runId,
       now,
@@ -7548,6 +7551,7 @@ export function issueService(db: Db) {
         criticalSilenceAgeMs !== null &&
         criticalSilenceAgeMs >= ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS &&
         !(await holdingRunIsWatchdogProtected(
+          tx,
           lockedIssue.companyId,
           input.expectedCheckoutRunId,
           now,
@@ -11868,6 +11872,7 @@ export function issueService(db: Db) {
               : null;
             const watchdogProtected = holdingRun
               ? await holdingRunIsWatchdogProtected(
+                  tx,
                   existing.companyId,
                   existing.checkoutRunId,
                   new Date(),
