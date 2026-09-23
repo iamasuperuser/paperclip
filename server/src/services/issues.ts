@@ -1,6 +1,7 @@
 import { externalConversationStateSql, nonIdleSlackIssueCondition, resumeSlackConversation } from "./slack-conversation-state.js";
 import { silenceStartedAt } from "../modules/active-run-watchdog/domain/policy.js";
 import { ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS } from "../modules/active-run-watchdog/thresholds.js";
+import { findLatestWatchdogDecisionState } from "../modules/active-run-watchdog/adapters/decision-state.js";
 import { documentService } from "./documents.js";
 import { parseTaskSearch, taskSearchCtes, taskSearchScore } from "./task-search.js";
 import { createdFromIssueCondition } from "./issue-creation-origin.js";
@@ -7458,6 +7459,29 @@ export function issueService(db: Db) {
     return heartbeatRunIsTerminalOrMissing(dbOrTx, runId);
   }
 
+  // A critically-silent holding run is only supersede-eligible when the
+  // watchdog has not explicitly protected it. An active snooze/continue
+  // decision (snoozedUntil in the future) or a durable dismissed-false-positive
+  // decision means the silence signal was deliberately overruled, so the
+  // binding supersede must wait until that protection lapses. Decisions are
+  // read with the same semantics the recovery scanner uses.
+  async function holdingRunIsWatchdogProtected(
+    companyId: string,
+    runId: string,
+    now: Date,
+  ): Promise<boolean> {
+    const decisionState = await findLatestWatchdogDecisionState(
+      db,
+      companyId,
+      runId,
+      now,
+    );
+    return (
+      decisionState.dismissedFalsePositive ||
+      decisionState.quietUntilDecision !== null
+    );
+  }
+
   async function adoptStaleCheckoutRun(input: {
     issueId: string;
     actorAgentId: string;
@@ -7520,11 +7544,18 @@ export function issueService(db: Db) {
       const criticalSilenceAgeMs = existingRun
         ? criticallySilentRunAgeMs(existingRun, now)
         : null;
+      const criticallySilentForSupersede =
+        criticalSilenceAgeMs !== null &&
+        criticalSilenceAgeMs >= ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS &&
+        !(await holdingRunIsWatchdogProtected(
+          lockedIssue.companyId,
+          input.expectedCheckoutRunId,
+          now,
+        ));
       const stale =
         !existingRun ||
         TERMINAL_HEARTBEAT_RUN_STATUSES.has(existingRun.status) ||
-        (criticalSilenceAgeMs !== null &&
-          criticalSilenceAgeMs >= ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS);
+        criticallySilentForSupersede;
       const actorLive =
         actorRun && !TERMINAL_HEARTBEAT_RUN_STATUSES.has(actorRun.status);
       if (!stale || !actorLive) {
@@ -11835,10 +11866,18 @@ export function issueService(db: Db) {
             const silenceAgeMs = holdingRun
               ? criticallySilentRunAgeMs(holdingRun, new Date())
               : null;
+            const watchdogProtected = holdingRun
+              ? await holdingRunIsWatchdogProtected(
+                  existing.companyId,
+                  existing.checkoutRunId,
+                  new Date(),
+                )
+              : false;
             const supersedeAllowed =
               holdingRun != null &&
               silenceAgeMs !== null &&
-              silenceAgeMs >= ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS;
+              silenceAgeMs >= ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS &&
+              !watchdogProtected;
             if (!supersedeAllowed) {
               throw conflict("Only checkout run can release issue", {
                 issueId: existing.id,

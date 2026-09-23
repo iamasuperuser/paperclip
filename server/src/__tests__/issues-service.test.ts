@@ -14,6 +14,7 @@ import {
   executionWorkspaces,
   goals,
   heartbeatRuns,
+  heartbeatRunWatchdogDecisions,
   instanceSettings,
   issueComments,
   issueInboxArchives,
@@ -7161,6 +7162,112 @@ describeEmbeddedPostgres("issueService.assertCheckoutOwner stale checkout adopti
 
     await expect(
       svc.assertCheckoutOwner(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
+  it("keeps a critically-silent checkout owner protected while a watchdog continue decision is active", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+    const { companyId } = await db
+      .select({ companyId: issues.companyId })
+      .from(issues)
+      .where(eq(issues.id, seeded.issueId))
+      .then((rows) => rows[0]!);
+    await db.insert(heartbeatRunWatchdogDecisions).values({
+      companyId,
+      runId: seeded.staleRunId,
+      decision: "continue",
+      snoozedUntil: new Date(Date.now() + 10 * 60 * 1000),
+    });
+
+    await expect(
+      svc.assertCheckoutOwner(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
+  it("supersedes a critically-silent checkout owner after the watchdog continue decision lapses", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+    const { companyId } = await db
+      .select({ companyId: issues.companyId })
+      .from(issues)
+      .where(eq(issues.id, seeded.issueId))
+      .then((rows) => rows[0]!);
+    await db.insert(heartbeatRunWatchdogDecisions).values({
+      companyId,
+      runId: seeded.staleRunId,
+      decision: "continue",
+      snoozedUntil: new Date(Date.now() - 60_000),
+    });
+
+    const ownership = await svc.assertCheckoutOwner(
+      seeded.issueId,
+      seeded.actorAgentId,
+      seeded.actorRunId,
+    );
+    expect(ownership.checkoutRunId).toBe(seeded.actorRunId);
+  });
+
+  it("keeps a critically-silent checkout owner protected by a dismissed false-positive decision", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+    const { companyId } = await db
+      .select({ companyId: issues.companyId })
+      .from(issues)
+      .where(eq(issues.id, seeded.issueId))
+      .then((rows) => rows[0]!);
+    await db.insert(heartbeatRunWatchdogDecisions).values({
+      companyId,
+      runId: seeded.staleRunId,
+      decision: "dismissed_false_positive",
+    });
+
+    await expect(
+      svc.assertCheckoutOwner(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
+  it("keeps a critically-silent checkout owner protected from release while a watchdog snooze is active", async () => {
+    const seeded = await seedOwnershipIssue({
+      checkoutStatus: "running",
+      holdingRunTimestamps: {
+        createdAt: new Date(
+          Date.now() - ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS - 60_000,
+        ),
+      },
+    });
+    const { companyId } = await db
+      .select({ companyId: issues.companyId })
+      .from(issues)
+      .where(eq(issues.id, seeded.issueId))
+      .then((rows) => rows[0]!);
+    await db.insert(heartbeatRunWatchdogDecisions).values({
+      companyId,
+      runId: seeded.staleRunId,
+      decision: "snooze",
+      snoozedUntil: new Date(Date.now() + 30 * 60 * 1000),
+    });
+
+    await expect(
+      svc.release(seeded.issueId, seeded.actorAgentId, seeded.actorRunId),
     ).rejects.toMatchObject({ status: 409 });
   });
 
