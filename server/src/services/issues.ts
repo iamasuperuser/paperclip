@@ -1,7 +1,9 @@
 import { externalConversationStateSql, nonIdleSlackIssueCondition, resumeSlackConversation } from "./slack-conversation-state.js";
-import { silenceStartedAt } from "../modules/active-run-watchdog/domain/policy.js";
-import { ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS } from "../modules/active-run-watchdog/thresholds.js";
-import { findLatestWatchdogDecisionState } from "../modules/active-run-watchdog/adapters/decision-state.js";
+import {
+  ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS,
+  findLatestWatchdogDecisionState,
+  silenceStartedAt,
+} from "../modules/active-run-watchdog/index.js";
 import { documentService } from "./documents.js";
 import { parseTaskSearch, taskSearchCtes, taskSearchScore } from "./task-search.js";
 import { createdFromIssueCondition } from "./issue-creation-origin.js";

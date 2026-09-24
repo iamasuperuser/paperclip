@@ -140,12 +140,10 @@ import {
   WatchdogDecisionApplicationError,
   type RunOutputSilenceSummary,
   type WatchdogDecisionActor,
-} from "../../modules/active-run-watchdog/index.js";
-import {
   ACTIVE_RUN_OUTPUT_CONTINUE_REARM_MS,
   ACTIVE_RUN_OUTPUT_CRITICAL_THRESHOLD_MS,
   ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS,
-} from "../../modules/active-run-watchdog/thresholds.js";
+} from "../../modules/active-run-watchdog/index.js";
 
 export {
   ACTIVE_RUN_OUTPUT_CONTINUE_REARM_MS,
