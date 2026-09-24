@@ -1,0 +1,23 @@
+server/src/modules/active-run-watchdog/index.ts
+  s_f36e15adf7321f::t_3d034fef46c0a4 59-71
+server/src/services/issues.ts
+  s_f36e15adf7321f::t_3d034fef46c0a4 2-6
+server/src/services/recovery/service.ts
+  s_f36e15adf7321f::t_3d034fef46c0a4 146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c6583e5332ce4e26a1f02e7f89736a373f61abba",
+  "prompts": {},
+  "sessions": {
+    "s_f36e15adf7321f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2f7765edffex2SNe4qh3PfkBx",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
