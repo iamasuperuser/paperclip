@@ -1,0 +1,25 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "cd18e5d38bf8387e42dbdcf520cda486b0e8be0c",
+  "prompts": {},
+  "sessions": {
+    "s_2462121e3a3d13": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae35b4cdffe16XbdTbtEdsbay",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    },
+    "s_9b05eff6c0b8f0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcab8c37cffessx3Ob0eRHWNLp",
+        "model": "glm-5.2"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
