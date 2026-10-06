@@ -1,0 +1,19 @@
+server/src/__tests__/paperclip-skill-api-url-docs.test.ts
+  s_e57793b8e9f504::t_c3c7ce6fc5f0bd 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9c9330034534fa3104aa83ce9dae6af53eadb21c",
+  "prompts": {},
+  "sessions": {
+    "s_e57793b8e9f504": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1396acdeffe0wTbxH1AZ82Yvc",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "David <david4david4david4@gmail.com>"
+    }
+  }
+}
